@@ -16,12 +16,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//  the code work at 16MHZ internal
+//  the code works at 16MHZ internal
 //  and use ssd1306xled Library for SSD1306 oled display 128x64
 //  Program chip with arduino uno as isp at 16 mhz internal!
 
-//  Code formatted and adjusted to work with skeleton handheld by @davdarko
-//  for element14presents episode
+//  Code formatted and adjusted to work with ATTiny85-game-console by me.
+
 
 #include <ssd1306xled.h>
 #include "spritebank.h"
