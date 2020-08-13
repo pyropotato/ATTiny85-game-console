@@ -16,12 +16,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//  the code works at 16MHZ internal
+//  the code work at 16MHZ internal
 //  and use ssd1306xled Library for SSD1306 oled display 128x64
 //  Program chip with arduino uno as isp at 16 mhz internal!
 
-//  Code formatted and adjusted to work with ATTiny85-game-console by me.
-
+//  Code formatted and adjusted to work with skeleton handheld by @davdarko
+//  for element14presents episode
 
 #include <ssd1306xled.h>
 #include "spritebank.h"
@@ -67,8 +67,9 @@ void resetBomb(void) {
 uint8_t aVal;
 void setup() {
   SSD1306.ssd1306_init();
-  DDRB = DDRB | 0b00010000;
-  DDRB = DDRB & 0b11010101;
+  DDRB = DDRB | 0b00010010;
+  DDRB = DDRB & 0b11010111;
+  //PORTB = PORTB | 0b00000010;
   // ADC 
   ADMUX |= (0 << REFS0);  //using Vin as voltage reference
   ADMUX |= (1 << MUX0);   //
@@ -78,6 +79,7 @@ void setup() {
   ADCSRA |= (1 << ADPS2); //set division factor-128 = 125kHz   (16MHz CPU clock/128 prescaler)
   ADCSRA |= (1 << ADPS1); // "  
   ADCSRA |= (1 << ADPS0); // "
+  DeadRumble();
   
 }
 
@@ -124,6 +126,7 @@ NEWLEVEL:
   resetMonster(Sprite);
   LoadLevel(Level);
 RESTARTLEVEL:
+  DeadRumble();
   resetBomb();
   Sprite[0].type = 0;
   Sprite[0].x = 9;
@@ -211,6 +214,7 @@ RESTARTLEVEL:
     }
     else {
       DeadSong();
+      //DeadRumble
       if (live > 0) {
         live--;
         goto RESTARTLEVEL;
@@ -300,7 +304,17 @@ void DeadSong(void) {
   for (uint8_t t = 1; t < 255; t++) {
     Sound(t, 1);
     Sound(255 - t, 2);
-  } delay(300);
+  } 
+  delay(300);
+}
+
+void DeadRumble(void){
+   for (uint8_t i = 0; i< 4; i++){
+  PORTB = PORTB | 0b00000010 ;
+  delay(50);
+  PORTB = PORTB & ~(0b00000010);
+  delay(50);
+  }
 }
 
 void DestroyBloc(void) {
