@@ -20,8 +20,7 @@
 //  and use ssd1306xled Library for SSD1306 oled display 128x64
 //  Program chip with arduino uno as isp at 16 mhz internal!
 
-//  Code formatted and adjusted to work with skeleton handheld by @davdarko
-//  for element14presents episode
+//  Code formatted and adjusted to work with ATTiny85-game-console
 
 #include <ssd1306xled.h>
 #include "spritebank.h"
@@ -67,9 +66,11 @@ void resetBomb(void) {
 uint8_t aVal;
 void setup() {
   SSD1306.ssd1306_init();
+  SSD1306.ssd1306_send_command(0xC0); //Flip display 
+  SSD1306.ssd1306_send_command(0xA0); // ''
   DDRB = DDRB | 0b00010010;
   DDRB = DDRB & 0b11010111;
-  //PORTB = PORTB | 0b00000010;
+  
   // ADC 
   ADMUX |= (0 << REFS0);  //using Vin as voltage reference
   ADMUX |= (1 << MUX0);   //
@@ -161,14 +162,13 @@ RESTARTLEVEL:
     }
     if (INGAME) {
       // left
-      // if ((analogRead(A0) >= 750) && (analogRead(A0) < 950)) {
       ADCSRA |= (1 << ADSC);
       aVal = ADCH;
       if ((aVal >= 23) && (aVal < 30)) {
         Sprite[0].DirectionV = 0;
       }
+      
       // right
-      //else if ((analogRead(A0) > 500) && (analogRead(A0) < 750)) {
       else if ((aVal > 40) && (aVal < 50)) {
         Sprite[0].DirectionV = 1;
       } else {
@@ -177,16 +177,15 @@ RESTARTLEVEL:
 
       // down
       if ((aVal > 70) && (aVal < 80)) {
-      // if ((analogRead(A3) >= 750) && (analogRead(A3) < 950)) {
         Sprite[0].DirectionH = 1;
       }
       // up
       else if ((aVal > 125) && (aVal < 130)) {
-      // if ((analogRead(A3) > 500) && (analogRead(A3) < 750)) {
         Sprite[0].DirectionH = 0;
       } else {
         if (Sprite[0].Decalagey == 0) Sprite[0].DirectionH = 2;
       }
+      
       ADCSRA |= (1 << ADSC);
       aVal = ADCH;
       if (((aVal >= 10) && (aVal < 20)) && (BOMBXY[2] == 0)) {
